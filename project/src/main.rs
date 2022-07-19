@@ -1,8 +1,8 @@
-use std::{collections::{HashMap, HashSet}, clone};
+use std::{collections::{HashMap, HashSet}};
 use dashmap::DashSet;
 use dashmap::DashMap;
 use rayon::prelude::*;
-use rand::{Rng, SeedableRng};
+use rand::Rng;
 
 //input a vertex and return all its neighbours
 fn nbrs(vertex: usize, graph: &HashMap<usize, HashSet<usize>>) -> HashSet<usize> {
@@ -120,8 +120,6 @@ fn rand_range(start: usize, end: usize) -> usize {
 }
 
 fn gen_hashset(n: usize) -> HashSet<usize> {
-    use rand::Rng;
-    use rand::distributions::Standard;
     let mut o: HashSet<usize> = HashSet::new();
     let rng = rand_range(1, n+1);
     (1..=rng).for_each(|num| {
@@ -172,44 +170,69 @@ fn main() {
     graph2.insert(14, HashSet::from([13,15]));
     graph2.insert(15, HashSet::from([14]));
 
-    let random_graph = create_graph(20);
+    let nodes = 180;
+    let random_graph = create_graph(nodes);
 
     let vertex: usize = 1;
     // println!("Neighbours of Vertex: {} are {:?}", vertex, nbrs(vertex, &graph))
 
     use std::time::Instant;
-    let now = Instant::now();
+    let norm1;
+    let norm2;
+    let norm3;
+    let par1;
+    let par2;
+    let par3;
 
     // Code block to measure.
     {
+        let now = Instant::now();
+        bfs(vertex, random_graph.clone());
+        norm1 = now.elapsed();
+
+        let now = Instant::now();
+        bfs(vertex, random_graph.clone());
+        norm2 = now.elapsed();
+
+        let now = Instant::now();
         let (parent, distance) = bfs(vertex, random_graph.clone());
-        let elapseds = now.elapsed();
-        println!("normal_bfs Elapsed: {:.2?}", elapseds);
+        norm3 = now.elapsed();
 
-        println!("Parent Map");
-        for (key, value) in parent.iter() {
-            println!("{} -> {}", key, value);
-        }
-        println!("Distance Map");
-        for (keys, values) in distance.iter() {
-            println!("{} -> {}", keys, values);
-        }
-    }
-    
-    let n = Instant::now();
-    {
-        let (parent, distance) = par_bfs(vertex, random_graph.clone());
-        let elapsed = n.elapsed();
-        println!("par_bfs Elapsed: {:.2?}", elapsed);
+        let n = Instant::now();
 
-        println!("Parent Map");
-        for (key, value) in parent.iter() {
-            println!("{} -> {}", key, value);
-        }
-        println!("Distance Map");
-        for (keys, values) in distance.iter() {
-            println!("{} -> {}", keys, values);
-        }
+        par_bfs(vertex, random_graph.clone());
+        par1 = n.elapsed();
+
+        let n = Instant::now();
+
+        par_bfs(vertex, random_graph.clone());
+        par2 = n.elapsed();
+
+        let n = Instant::now();
+
+        let (par_parent, par_distance) = par_bfs(vertex, random_graph.clone());
+        par3 = n.elapsed();
+
+        println!("{}",distance.eq(&par_distance));
+        // println!("Parent Map");
+        // for (key, value) in parent.iter() {
+        //     println!("{} -> {}", key, value);
+        // }
+        // println!("Distance Map");
+        // for (keys, values) in distance.iter() {
+        //     println!("{} -> {}", keys, values);
+        // }
     }
-    
+
+    println!("Number of nodes: {}", nodes);
+    println!("           normal_bfs                 par_bfs");
+    println!("Elapsed 1: {:.2?}                     {:.2?}", norm1,par1);
+    println!("Elapsed 2: {:.2?}                     {:.2?}", norm2,par2);
+    println!("Elapsed 3: {:.2?}                     {:.2?}", norm3,par3);
+
+    let average_norm = (norm1 + norm2 + norm3)/3;
+    println!("Average normal_bfs: {:.2?}", average_norm);
+    let average_par = (par1 + par2 + par3)/3;
+    println!("Average par_bfs: {:.2?}", average_par);
+
 }
