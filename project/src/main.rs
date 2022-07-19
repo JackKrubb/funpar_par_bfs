@@ -123,12 +123,22 @@ fn main() {
     let mut new_parent: DashMap<usize,usize> = DashMap::new();
     new_parent.extend(parent.clone());
 
+    let mut n_parent: HashMap<usize,usize> = HashMap::new();
+    for n in new_parent.iter() {
+        n_parent.insert(*n.key(), *n.value());
+    }
+
     for (&key, &value) in parent.iter() {
         println!("{} -> {}", key, value);
     }
 
     new_parent.iter().for_each(|n| {
         println!("{} -> {}", n.key(), n.value());
-    })
+    });
+
+    for (&key, &value) in n_parent.iter() {
+        println!("{} -> {}", key, value);
+    }
+
     
 }
