@@ -107,8 +107,14 @@ fn main() {
     let mut new_frontier: DashSet<usize> = DashSet::new();
     new_frontier.extend(frontier.clone());
 
+    let mut n_frontier: HashSet<usize> = HashSet::new();
+    for n in new_frontier.iter() {
+        n_frontier.insert(*n.key());
+    }
+
     println!("{:?}",frontier);
     println!("{:?}", new_frontier);
+    println!("{:?}",n_frontier);
 
     let mut parent: HashMap<usize,usize> = HashMap::new();
     parent.insert(1,1);
