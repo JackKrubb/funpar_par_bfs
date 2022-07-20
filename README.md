@@ -2,11 +2,11 @@
 
 Parallel Breadth-First Search 
 
-Problem & Solution
+Problem & Solution:
 Sequential Breadth-First Search is slow for large networks so why not make it faster? :)
 Seq BFS is done by iterating through each vertex in each level to find its neighbours and add it into the queue. This is slow and there is an opportunity for us to perform this process in parallel.
 
-Project Scope
+Project Scope: 
 To parallelize BFS, it is quite difficult to implement as we need all the workers (threads?) to be able to have access to “global” variables in order to update/create the frontiers/distance without interrupting each other or creating any race conditions. Simple parallelization of BFS may cause race conditions such as duplicating the update call to the distance because the neighbours of two vertices have the possibility of clashing, so we will aim to prevent this from happening while making it parallel.
 
 Therefore, in our project, we will aim to provide synchronizations to all the workers and speed up parallel BFS.
