@@ -77,9 +77,9 @@ fn par_bfs(source: usize, graph: HashMap<usize, HashSet<usize>>) -> (HashMap<usi
             }
         });
 
-        for v in frontier {
+        frontier.par_iter().for_each(|&v| {
             new_frontier.remove(&v);
-        }
+        });
 
         let mut n_frontier: HashSet<usize> = HashSet::new();
         for n in new_frontier.iter() {
@@ -215,16 +215,17 @@ fn main() {
 
         println!("{}",distance.eq(&par_distance));
         // println!("Parent Map");
-        // for (key, value) in parent.iter() {
+        // for (key, value) in par_parent.iter() {
         //     println!("{} -> {}", key, value);
         // }
         // println!("Distance Map");
-        // for (keys, values) in distance.iter() {
-        //     println!("{} -> {}", keys, values);
+        // for (key, value) in par_distance.iter() {
+        //     println!("{} -> {}", key, value);
         // }
     }
 
-    println!("Number of nodes: {}", nodes);
+    //uncomment when testing with create_graph
+    //println!("Number of nodes: {}", nodes);
     println!("           normal_bfs                 par_bfs");
     println!("Elapsed 1: {:.2?}                     {:.2?}", norm1,par1);
     println!("Elapsed 2: {:.2?}                     {:.2?}", norm2,par2);
